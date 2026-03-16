@@ -4,9 +4,9 @@ A ready-made solution for launching a Telegram Mini App (TWA) in the “Tap-to-E
 This is a framework that can be quickly adapted to any theme (clicker, game, service).
 
 ### 📱 What it looks like
-*(Your screenshots and GIFs will go here)*
 
-![Game Preview](Game.gif)
+
+<img src="Game.gif" width="400">
 
 
 ### 🛠 Technology stack
