@@ -7,7 +7,7 @@ This is a framework that can be quickly adapted to any theme (clicker, game, ser
 *(Your screenshots and GIFs will go here)*
 
 [![Screenshot 1](link_to_image_1)](https://github.com/miumilt/Clicker-Starter-Kit/blob/main/Game.gif)
-![Screenshot 2](link_to_image_2)
+
 
 ### 🛠 Technology stack
 - **Frontend:** React + Vite
