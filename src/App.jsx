@@ -157,10 +157,10 @@ function App() {
               Character
             </div>
             <div className="mt-3 text-2xl font-semibold text-white/90">
-              Businessman Elite
+              Мама Роза
             </div>
             <div className="mt-2 text-xs text-white/60">
-              Premium illustration placeholder
+              Главная по Одессе
             </div>
           </div>
         </div>
@@ -172,7 +172,7 @@ function App() {
               Action
             </div>
             <div className="mt-2 text-lg font-semibold text-white">
-              Work to earn coins
+              Заработать копеечку
             </div>
           </div>
           <HelpTip text="Work consumes energy. Energy regenerates every 3 seconds." />
@@ -185,7 +185,7 @@ function App() {
               ? 'bg-white/10 text-white/40'
               : 'bg-[#00ff9d] text-[#0b0b0b] shadow-[0_0_30px_rgba(0,255,157,0.6)] hover:scale-[1.02] active:scale-95'
           }`}
-        >
+        >ТАПАЙ РОЗУ
           {cooldown && (
             <span className="cooldown-sheen absolute inset-0 bg-gradient-to-r from-transparent via-white/70 to-transparent" />
           )}
