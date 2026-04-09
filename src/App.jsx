@@ -151,17 +151,43 @@ function App() {
           </div>
           <HelpTip text="Your income is based on the selected role. Upgrade in the shop." />
         </div>
-        <div className="mt-5 flex items-center justify-center rounded-3xl bg-gradient-to-br from-[#00ff9d]/20 via-[#1e1e1e] to-[#121212] px-6 py-8 text-center">
-          <div>
-            <div className="text-sm uppercase tracking-[0.4em] text-white/40">
-              Character
+        {/* НОВЫЙ ЦЕНТРАЛЬНЫЙ БЛОК */}
+        <div className="rounded-3xl bg-[#1e1e1e] p-5 shadow-2xl mt-4 border border-white/5">
+          <h2 className="text-xl font-bold text-center text-white mb-1">СЕМЕЙНЫЙ АРХИВ</h2>
+          <p className="text-[10px] text-blue-400 uppercase tracking-widest text-center mb-4">Капсула времени</p>
+          
+          <div className="space-y-3">
+            <input 
+              type="text" 
+              placeholder="Кому (Email или @Telegram)" 
+              className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white outline-none focus:border-blue-500"
+            />
+            
+            <div className="flex flex-col gap-1">
+              <label className="text-[9px] text-white/30 uppercase ml-1">Дата вскрытия</label>
+              <input 
+                type="date" 
+                className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white outline-none"
+              />
             </div>
-            <div className="mt-3 text-2xl font-semibold text-white/90">
-              Мама Роза
+
+            {/* ДЕНЕЖНЫЙ ПОДАРOК */}
+            <div className="flex items-center gap-3 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
+              <span className="text-xl">💰</span>
+              <input 
+                type="text" 
+                placeholder="Сумма или ссылка на подарок" 
+                className="w-full bg-transparent text-sm text-white outline-none placeholder:text-yellow-500/50"
+              />
             </div>
-            <div className="mt-2 text-xs text-white/60">
-              Главная по Одессе
-            </div>
+            
+            <button className="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold py-4 rounded-xl mt-2 shadow-lg active:scale-95 transition-all">
+              ЗАПЕЧАТАТЬ И ОТПРАВИТЬ 🔒
+            </button>
+            
+            <p className="mt-2 text-[9px] text-gray-500 text-center italic">
+              * Доставка гарантирована системой Хранителей
+            </p>
           </div>
         </div>
 {/* ФОРМА КАПСУЛЫ ВРЕМЕНИ */}
@@ -209,22 +235,7 @@ function App() {
     * Мы отправим уведомление Хранителю, если получатель не выйдет на связь.
   </p>
 </div>
-          onClick={handleWork}
-          disabled={energy < currentJob.energyCost || cooldown}
-          className={`relative mt-5 w-full overflow-hidden rounded-3xl px-6 py-6 text-2xl font-semibold uppercase tracking-[0.3em] transition-all ${
-            energy < currentJob.energyCost || cooldown
-              ? 'bg-white/10 text-white/40'
-              : 'bg-[#00ff9d] text-[#0b0b0b] shadow-[0_0_30px_rgba(0,255,157,0.6)] hover:scale-[1.02] active:scale-95'
-          }`}
-        >ТАПАЙ РОЗУ
-          {cooldown && (
-            <span className="cooldown-sheen absolute inset-0 bg-gradient-to-r from-transparent via-white/70 to-transparent" />
-          )}
-          Work
-        </button>
-        <div className="mt-3 text-xs uppercase tracking-[0.4em] text-white/40">
-          Energy cost {currentJob.energyCost}
-        </div>
+        
       </div>
     </div>
   )
