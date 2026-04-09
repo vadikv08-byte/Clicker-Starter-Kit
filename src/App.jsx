@@ -170,14 +170,30 @@ function App() {
           <div>
             <div className="text-xs uppercase tracking-[0.3em] text-white/50">
               Action
-            </div>
-            <div className="mt-2 text-lg font-semibold text-white">
-              Заработать копеечку
-            </div>
-          </div>
-          <HelpTip text="Work consumes energy. Energy regenerates every 3 seconds." />
-        </div>
-        <button
+            <div className="rounded-3xl bg-[#1e1e1e] p-5 shadow-lg mt-4">
+  <div className="text-xs uppercase tracking-[0.3em] text-white/50">Создать капсулу</div>
+  
+  <div className="mt-4 space-y-3">
+    <input 
+      type="text" 
+      placeholder="Кому (Email или @Telegram)" 
+      className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white outline-none focus:border-blue-500"
+    />
+    
+    <input 
+      type="date" 
+      className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white outline-none"
+    />
+    
+    <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all active:scale-95">
+      ЗАПЕЧАТАТЬ ПАМЯТЬ 🔒
+    </button>
+    </div>
+  
+  <p className="mt-3 text-[10px] text-gray-500 text-center">
+    * Мы отправим уведомление Хранителю, если получатель не выйдет на связь.
+  </p>
+</div>
           onClick={handleWork}
           disabled={energy < currentJob.energyCost || cooldown}
           className={`relative mt-5 w-full overflow-hidden rounded-3xl px-6 py-6 text-2xl font-semibold uppercase tracking-[0.3em] transition-all ${
