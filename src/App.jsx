@@ -4,24 +4,23 @@ import './App.css';
 const tg = window.Telegram?.WebApp;
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('create'); // Основная вкладка
-  const [showIntro, setShowIntro] = useState(true);   // Показ приветствия
+  const [activeTab, setActiveTab] = useState('create'); 
+  const [showIntro, setShowIntro] = useState(true);   
   const user = tg?.initDataUnsafe?.user;
 
   useEffect(() => {
     if (tg) {
       tg.ready();
       tg.expand();
+      tg.headerColor = '#000000';
     }
   }, []);
 
-  // Функция для кнопки на Welcome-экране
   const startApp = () => {
     if (tg) tg.HapticFeedback.impactOccurred('medium');
     setShowIntro(false);
   };
 
-  // Функция "Запечатать"
   const handleSeal = () => {
     if (tg) {
       tg.HapticFeedback.notificationOccurred('success');
@@ -29,134 +28,147 @@ export default function App() {
     }
   };
 
-  // --- ЭКРАН ПРИВЕТСТВИЯ (INTRO) ---
+  // --- ЭКРАН ПРИВЕТСТВИЯ ---
   if (showIntro) {
     return (
-      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6 text-center animate-fadeIn">
-        <div className="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center mb-8 shadow-2xl shadow-blue-500/40">
-          <span className="text-5xl">🔒</span>
+      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-8 text-center animate-fadeIn">
+        <div className="w-24 h-24 bg-blue-600 rounded-[30px] flex items-center justify-center mb-10 rotate-3 shadow-2xl shadow-blue-500/40 border border-white/20">
+          <span className="text-5xl">📜</span>
         </div>
-        <h1 className="text-3xl font-black uppercase tracking-tighter mb-4">Семейный Архив</h1>
-        <p className="text-gray-400 text-sm leading-relaxed mb-10">
-          Создавайте цифровые капсулы времени, сохраняйте историю своей семьи и передавайте ценности через поколения.
+        <h1 className="text-4xl font-black uppercase mb-4 tracking-tighter italic">Хранитель Памяти</h1>
+        <p className="text-gray-400 text-sm leading-relaxed mb-12 px-4">
+          Создавайте послания, которые преодолеют десятилетия. Ваша история — это лучшее наследство для ваших потомков.
         </p>
-        <div className="space-y-4 w-full max-w-xs">
-          <div className="flex items-center gap-3 text-left bg-[#1c1c1e] p-4 rounded-2xl border border-white/5">
-            <span>🚀</span>
-            <div className="text-xs text-gray-300">Создавайте послания, которые откроются через 10, 20 или 50 лет.</div>
+        
+        <div className="w-full space-y-3 mb-12">
+          <div className="bg-[#1c1c1e] p-4 rounded-2xl border border-white/5 flex items-center gap-4 text-left">
+            <span className="text-2xl">🔒</span>
+            <div className="text-xs text-gray-300 font-medium">Безопасное хранение данных на 50+ лет</div>
           </div>
-          <div className="flex items-center gap-3 text-left bg-[#1c1c1e] p-4 rounded-2xl border border-white/5">
-            <span>💰</span>
-            <div className="text-xs text-gray-300">Прикрепляйте цифровые активы и подарки своим потомкам.</div>
+          <div className="bg-[#1c1c1e] p-4 rounded-2xl border border-white/5 flex items-center gap-4 text-left">
+            <span className="text-2xl">💎</span>
+            <div className="text-xs text-gray-300 font-medium">Возможность прикрепить цифровые активы</div>
           </div>
         </div>
+
         <button 
           onClick={startApp}
-          className="w-full max-w-xs bg-blue-600 text-white font-black py-5 rounded-2xl mt-12 shadow-lg active:scale-95 transition-all"
+          className="w-full max-w-xs bg-white text-black font-black py-5 rounded-2xl shadow-xl active:scale-95 transition-all uppercase tracking-widest"
         >
-          НАЧАТЬ ПУТЕШЕСТВИЕ
+          Войти в архив
         </button>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans flex flex-col overflow-hidden">
-      
-      {/* ОСНОВНОЙ КОНТЕНТ */}
-      <div className="flex-grow overflow-y-auto pb-32">
+    <div className="min-h-screen bg-black text-white flex flex-col font-sans overflow-hidden">
+      <div className="flex-grow overflow-y-auto pb-32 p-4">
         
-        {/* ВКЛАДКА: СОЗДАТЬ (ГЛАВНАЯ) */}
+        {/* ВКЛАДКА: СОЗДАТЬ */}
         {activeTab === 'create' && (
-          <div className="p-4 space-y-6 animate-fadeIn">
-            <div className="bg-[#1c1c1e] border border-white/10 rounded-3xl p-4 flex items-center gap-4">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-orange-500 to-red-500 flex items-center justify-center border-2 border-white/10">
-                <span className="text-xl font-bold">{user?.first_name?.charAt(0) || 'V'}</span>
-              </div>
-              <div className="flex flex-col text-left">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold">{user?.first_name || "Хранитель"}</span>
-                  <span className="bg-blue-600 text-[8px] px-1.5 py-0.5 rounded font-black uppercase">Online</span>
-                </div>
-                <div className="text-[10px] text-gray-500 font-bold">ID: {user?.id || "7222570439"}</div>
-              </div>
+          <div className="space-y-6 animate-fadeIn">
+            <div className="bg-[#1c1c1e] rounded-3xl p-4 flex items-center gap-4 border border-white/10 shadow-lg">
+               <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-400 flex items-center justify-center border-2 border-white/10">
+                 <span className="text-2xl font-bold">{user?.first_name?.charAt(0) || '👤'}</span>
+               </div>
+               <div className="text-left">
+                 <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-white">{user?.first_name || 'Хранитель'}</span>
+                    <span className="bg-green-500/20 text-green-500 text-[8px] px-1.5 py-0.5 rounded font-black uppercase">Online</span>
+                 </div>
+                 <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">ID: {user?.id || '7222570439'}</div>
+               </div>
             </div>
 
-            <h2 className="text-2xl font-black text-center uppercase">Новая капсула</h2>
+            <h2 className="text-2xl font-black uppercase text-center tracking-tighter">Новая капсула</h2>
 
-            <div className="bg-[#1c1c1e] rounded-[32px] p-6 border border-white/5 space-y-4">
+            <div className="bg-[#1c1c1e] rounded-[35px] p-6 border border-white/5 space-y-5 shadow-2xl relative">
               <div className="text-left">
-                <label className="text-[10px] text-white/30 uppercase font-black ml-1 mb-1 block">Получатель</label>
-                <input type="text" placeholder="Email или @Telegram" className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white outline-none focus:border-blue-500" />
+                <label className="text-[9px] text-white/30 uppercase font-black ml-2 mb-1 block tracking-widest">Получатель</label>
+                <input type="text" placeholder="Email или @Telegram" className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white outline-none focus:border-blue-500 transition-colors" />
               </div>
               <div className="text-left">
-                <label className="text-[10px] text-white/30 uppercase font-black ml-1 mb-1 block">Дата вскрытия (через 1-50 лет)</label>
-                <input type="text" placeholder="9 апр. 2026 г." className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white outline-none" />
+                <label className="text-[9px] text-white/30 uppercase font-black ml-2 mb-1 block tracking-widest">Дата вскрытия</label>
+                <input type="text" placeholder="Например: 12 мая 2045" className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white outline-none focus:border-blue-500 transition-colors" />
               </div>
-              <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-[24px] p-4 text-left">
-                <label className="text-[10px] text-yellow-600 uppercase font-black ml-1 mb-1 block">Денежный подарок (Цифровой траст)</label>
-                <input type="text" placeholder="Сумма или ссылка на баланс" className="w-full bg-transparent text-sm text-white outline-none font-bold placeholder:text-yellow-700/30" />
+              <div className="bg-blue-500/5 border border-blue-500/20 rounded-[28px] p-5 text-left">
+                <label className="text-[9px] text-blue-400 uppercase font-black mb-1 block tracking-widest">Денежный вклад</label>
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">💰</span>
+                  <input type="text" placeholder="Сумма (USDT/TON)" className="w-full bg-transparent text-sm text-white outline-none font-bold" />
+                </div>
               </div>
-              <button onClick={handleSeal} className="w-full bg-blue-600 text-white font-black py-5 rounded-2xl text-base shadow-lg active:scale-95 transition-all">
-                ЗАПЕЧАТАТЬ МОМЕНТ 🔒
+              <button onClick={handleSeal} className="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-lg shadow-blue-500/20 active:scale-95 transition-all tracking-widest">
+                ЗАПЕЧАТАТЬ ПАМЯТЬ 🔒
               </button>
             </div>
+            <p className="text-[10px] text-gray-600 italic">* Послание будет доставлено, даже если вы не выйдете на связь</p>
           </div>
         )}
 
-        {/* ВКЛАДКА: НАСЛЕДИЕ (КВЕСТЫ) */}
+        {/* ВКЛАДКА: НАСЛЕДИЕ */}
         {activeTab === 'heritage' && (
-          <div className="p-4 space-y-6 animate-fadeIn">
-            <h2 className="text-2xl font-bold text-center">Квесты Наследия</h2>
-            <p className="text-xs text-gray-500 text-center px-4">Выполняйте задания, чтобы оживить историю вашей семьи</p>
-            
+          <div className="space-y-6 animate-fadeIn">
+            <div className="text-left px-2">
+                <h2 className="text-3xl font-black uppercase tracking-tighter text-white">Квесты</h2>
+                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">Очки Хранителя (XP)</p>
+            </div>
             <div className="space-y-4">
-              {[
-                { icon: '🎤', title: 'Интервью с бабушкой', xp: '+250 XP', desc: 'Запишите аудио-воспоминания о её детстве.' },
-                { icon: '📸', title: 'Оцифровка архива', xp: '+100 XP', desc: 'Загрузите 5 старых семейных фотографий.' },
-                { icon: '🌳', title: 'Ветвь древа', xp: '+50 XP', desc: 'Пропишите биографию прадедушки в древе.' }
-              ].map((quest, i) => (
-                <div key={i} className="bg-[#1c1c1e] rounded-[28px] p-5 border border-white/5 flex items-center gap-4 active:scale-[0.98] transition-all">
-                  <div className="w-16 h-16 bg-zinc-900 rounded-2xl flex items-center justify-center text-3xl shadow-inner">{quest.icon}</div>
-                  <div className="flex-grow text-left">
-                    <div className="flex justify-between items-start">
-                      <h4 className="text-sm font-bold text-white">{quest.title}</h4>
-                      <span className="text-[9px] font-black text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-full">{quest.xp}</span>
+                {[
+                  { icon: '🎤', title: 'Интервью', xp: '+250 XP', desc: 'Запишите аудио с воспоминаниями старших.' },
+                  { icon: '📸', title: 'Оцифровка', xp: '+100 XP', desc: 'Загрузите 5 архивных фото семьи.' },
+                  { icon: '🌳', title: 'Древо', xp: '+50 XP', desc: 'Добавьте биографию прадедушки.' }
+                ].map((item, i) => (
+                  <div key={i} className="bg-[#1c1c1e] p-5 rounded-[30px] border border-white/5 flex items-center gap-5 active:scale-[0.98] transition-all">
+                    <div className="w-16 h-16 bg-black rounded-2xl flex items-center justify-center text-3xl shadow-inner border border-white/5">{item.icon}</div>
+                    <div className="flex-grow text-left">
+                        <div className="flex justify-between items-center mb-1">
+                            <span className="font-black text-white uppercase text-xs">{item.title}</span>
+                            <span className="text-blue-500 font-black text-[10px] bg-blue-500/10 px-2 py-0.5 rounded-full">{item.xp}</span>
+                        </div>
+                        <p className="text-[10px] text-gray-500 leading-tight">{item.desc}</p>
                     </div>
-                    <p className="text-[10px] text-gray-500 mt-1 leading-tight">{quest.desc}</p>
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
+
+        {/* ВКЛАДКА: ЛЕНТА */}
+        {activeTab === 'feed' && (
+          <div className="space-y-6 animate-fadeIn">
+            <h2 className="text-2xl font-black text-left uppercase tracking-tighter">Лента Хранителей</h2>
+            <div className="bg-gradient-to-br from-zinc-800 to-black rounded-[35px] p-8 border border-white/10 shadow-2xl relative overflow-hidden">
+                <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-600/10 blur-[50px]"></div>
+                <div className="text-[10px] text-gray-500 uppercase font-black mb-2 tracking-[0.2em] text-left">Глобальная статистика</div>
+                <div className="text-5xl font-black text-white text-left tracking-tighter">12,854</div>
+                <div className="text-xs text-blue-500 font-bold uppercase mt-1 text-left">Капсул запечатано сегодня</div>
+            </div>
+            <div className="bg-[#1c1c1e] p-6 rounded-[30px] border border-white/5 text-left relative">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center border border-white/10">🌍</div>
+                  <div>
+                    <div className="text-xs font-black text-white uppercase">Александр П.</div>
+                    <div className="text-[9px] text-gray-600 font-bold uppercase">Запечатано 12.04.2024</div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ВКЛАДКА: ЛЕНТА (АРХИВ) */}
-        {activeTab === 'feed' && (
-          <div className="p-4 space-y-6 animate-fadeIn">
-            <h2 className="text-2xl font-bold text-left">Лента Хранителей</h2>
-            <div className="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-3xl p-6 shadow-xl text-left">
-              <div className="text-[10px] text-white/50 uppercase font-black mb-1">ВСЕГО СОХРАНЕНО</div>
-              <div className="text-4xl font-black">12,854 <span className="text-sm font-normal opacity-60 italic">капсул</span></div>
-            </div>
-            <div className="bg-[#1c1c1e] rounded-3xl p-4 border border-white/5 text-left">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center">⏳</div>
-                <div className="text-xs font-bold">Капсула от: Александр П.</div>
-              </div>
-              <p className="text-xs text-gray-400 italic">"Это послание для моих детей. Откройте его, когда станете взрослыми..."</p>
-              <div className="mt-4 pt-4 border-t border-white/5 flex justify-between items-center">
-                <span className="text-[9px] text-gray-600 font-bold uppercase tracking-widest">Откроется через 14 лет</span>
-                <button className="text-[9px] text-blue-400 font-black uppercase">Подробнее</button>
-              </div>
+                <p className="text-xs text-gray-400 italic leading-relaxed font-medium">"Это послание для моих внуков. Я хочу, чтобы вы знали, каким был мир в 2024 году..."</p>
+                <div className="mt-6 flex justify-between items-center">
+                    <div className="flex gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
+                        <span className="text-[9px] text-gray-500 font-bold uppercase">Откроется через 20 лет</span>
+                    </div>
+                    <button className="text-[10px] font-black text-blue-500 uppercase tracking-widest bg-blue-500/5 px-3 py-1.5 rounded-xl border border-blue-500/10">Подробнее</button>
+                </div>
             </div>
           </div>
         )}
 
       </div>
 
-      {/* НИЖНЯЯ НАВИГАЦИЯ */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-md bg-[#1c1c1e]/90 backdrop-blur-2xl border border-white/10 rounded-[40px] p-2 flex justify-between shadow-2xl z-50">
+      {/* НАВИГАЦИЯ */}
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[92%] max-w-md bg-[#1c1c1e]/90 backdrop-blur-3xl border border-white/10 rounded-[45px] p-2 flex justify-between z-50 shadow-2xl shadow-black">
         {[
           { id: 'feed', icon: '🌍', label: 'Лента' },
           { id: 'create', icon: '🔒', label: 'Создать' },
@@ -168,12 +180,12 @@ export default function App() {
               if (tg) tg.HapticFeedback.impactOccurred('light');
               setActiveTab(item.id);
             }}
-            className={`flex items-center gap-2 px-5 py-4 rounded-[30px] transition-all duration-300 ${
-              activeTab === item.id ? 'bg-blue-600 text-white shadow-xl shadow-blue-600/20' : 'text-white/40'
+            className={`flex items-center gap-3 px-6 py-4 rounded-[35px] transition-all duration-500 ${
+              activeTab === item.id ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30' : 'text-gray-500'
             }`}
           >
-            <span className="text-xl leading-none">{item.icon}</span>
-            {activeTab === item.id && <span className="text-[11px] font-black uppercase tracking-widest">{item.label}</span>}
+            <span className="text-2xl">{item.icon}</span>
+            {activeTab === item.id && <span className="text-[10px] font-black uppercase tracking-[0.1em]">{item.label}</span>}
           </button>
         ))}
       </div>
