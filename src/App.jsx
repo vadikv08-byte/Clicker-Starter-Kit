@@ -1,412 +1,85 @@
-import { useEffect, useMemo, useState } from 'react'
-import { CircleHelp, Crown, Sparkles, Trophy } from 'lucide-react'
-import Header from './components/Header.jsx'
-import JobCard from './components/JobCard.jsx'
-import Navigation from './components/Navigation.jsx'
-import SuccessModal from './components/SuccessModal.jsx'
-
-const STORAGE_KEY = 'businessman_simulator_state'
-
-const JOBS = [
-  { id: 'courier', name: 'Courier', income: 12, energyCost: 20, price: 0 },
-  { id: 'waiter', name: 'Waiter', income: 24, energyCost: 20, price: 180 },
-  { id: 'manager', name: 'Manager', income: 55, energyCost: 20, price: 650 },
-  { id: 'director', name: 'Director', income: 120, energyCost: 20, price: 2100 },
-]
-
-const TASKS = [
-  { id: 1, title: 'Subscribe to the Telegram channel', reward: '+50 coins' },
-  { id: 2, title: 'Invite 5 friends', reward: '+150 coins' },
-]
-
-const initialState = {
-  balance: 0,
-  energy: 100,
-  currentJobId: 'courier',
-  inventory: ['courier'],
-  totalEarned: 0,
-  regDate: new Date().toISOString(),
-  referrals: 0,
-}
-
-const getStoredState = () => {
-  if (typeof window === 'undefined') return initialState
-  const saved = localStorage.getItem(STORAGE_KEY)
-  if (!saved) return initialState
-  try {
-    const parsed = JSON.parse(saved)
-    return { ...initialState, ...parsed }
-  } catch {
-    return initialState
-  }
-}
-
-function HelpTip({ text }) {
-  const [open, setOpen] = useState(false)
-
-  return (
-    <div className="relative">
-      <button
-        onClick={() => setOpen((prev) => !prev)}
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
-        className="flex h-6 w-6 items-center justify-center rounded-full border border-white/10 bg-[#121212] text-white/70"
-      >
-        <CircleHelp size={14} />
-      </button>
-      {open && (
-        <div className="absolute right-0 top-8 z-10 w-44 rounded-xl border border-white/10 bg-[#1e1e1e] p-3 text-xs text-white/80 shadow-[0_0_24px_rgba(0,0,0,0.6)]">
-          {text}
-        </div>
-      )}
-    </div>
-  )
-}
+import React, { useState } from 'react';
+import './App.css';
 
 function App() {
-  const storedState = useMemo(() => getStoredState(), [])
-  const [activeTab, setActiveTab] = useState('home')
-  const [balance, setBalance] = useState(storedState.balance)
-  const [energy, setEnergy] = useState(storedState.energy)
-  const [currentJobId, setCurrentJobId] = useState(storedState.currentJobId)
-  const [inventory, setInventory] = useState(storedState.inventory)
-  const [totalEarned, setTotalEarned] = useState(storedState.totalEarned)
-  const [regDate] = useState(storedState.regDate)
-  const [referrals] = useState(storedState.referrals)
-  const [selectedCategory, setSelectedCategory] = useState('Jobs')
-  const [modalItem, setModalItem] = useState(null)
-  const [cooldown, setCooldown] = useState(false)
-
-  const currentJob = useMemo(
-    () => JOBS.find((job) => job.id === currentJobId) || JOBS[0],
-    [currentJobId]
-  )
-
-  useEffect(() => {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-        balance,
-        energy,
-        currentJobId,
-        inventory,
-        totalEarned,
-        regDate,
-        referrals,
-      })
-    )
-  }, [balance, energy, currentJobId, inventory, totalEarned, regDate, referrals])
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setEnergy((prev) => (prev < 100 ? prev + 1 : prev))
-    }, 3000)
-    return () => clearInterval(interval)
-  }, [])
-
-  const handleWork = () => {
-    if (cooldown) return
-    if (energy < currentJob.energyCost) return
-    setEnergy((prev) => Math.max(0, prev - currentJob.energyCost))
-    setBalance((prev) => prev + currentJob.income)
-    setTotalEarned((prev) => prev + currentJob.income)
-    setCooldown(true)
-    setTimeout(() => setCooldown(false), 700)
-  }
-
-  const handlePurchase = (job) => {
-    setModalItem(job)
-  }
-
-  const confirmPurchase = () => {
-    if (!modalItem) return
-    if (balance < modalItem.price) return
-    if (!inventory.includes(modalItem.id)) {
-      setInventory((prev) => [...prev, modalItem.id])
-    }
-    setBalance((prev) => prev - modalItem.price)
-    setCurrentJobId(modalItem.id)
-    setModalItem(null)
-  }
-
-  const handleSelect = (job) => {
-    setCurrentJobId(job.id)
-  }
-
-  const renderHome = () => (
-    <div className="flex flex-1 flex-col gap-6">
-      <Header energy={energy} maxEnergy={100} balance={balance} />
-      <div className="rounded-3xl bg-[#1e1e1e] p-5 shadow-[0_0_40px_rgba(0,0,0,0.6)]">
-        <div className="flex items-start justify-between">
-          <div>
-            <div className="text-xs uppercase tracking-[0.3em] text-white/50">
-              Current Role
-            </div>
-            <div className="mt-2 text-2xl font-semibold text-white">
-              {currentJob.name}
-            </div>
-            <div className="mt-1 text-sm text-white/60">
-              Income per work: {currentJob.income}
-            </div>
-          </div>
-          <HelpTip text="Your income is based on the selected role. Upgrade in the shop." />
-        </div>
-        {/* НОВЫЙ ЦЕНТРАЛЬНЫЙ БЛОК */}
-        <div className="rounded-3xl bg-[#1e1e1e] p-5 shadow-2xl mt-4 border border-white/5">
-          <h2 className="text-xl font-bold text-center text-white mb-1">СЕМЕЙНЫЙ АРХИВ</h2>
-          <p className="text-[10px] text-blue-400 uppercase tracking-widest text-center mb-4">Капсула времени</p>
-          
-          <div className="space-y-3">
-            <input 
-              type="text" 
-              placeholder="Кому (Email или @Telegram)" 
-              className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white outline-none focus:border-blue-500"
-            />
-            
-            <div className="flex flex-col gap-1">
-              <label className="text-[9px] text-white/30 uppercase ml-1">Дата вскрытия</label>
-              <input 
-                type="date" 
-                className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white outline-none"
-              />
-            </div>
-
-            {/* ДЕНЕЖНЫЙ ПОДАРOК */}
-            <div className="flex items-center gap-3 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
-              <span className="text-xl">💰</span>
-              <input 
-                type="text" 
-                placeholder="Сумма или ссылка на подарок" 
-                className="w-full bg-transparent text-sm text-white outline-none placeholder:text-yellow-500/50"
-              />
-            </div>
-            
-            <button className="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold py-4 rounded-xl mt-2 shadow-lg active:scale-95 transition-all">
-              ЗАПЕЧАТАТЬ И ОТПРАВИТЬ 🔒
-            </button>
-            
-            <p className="mt-2 text-[9px] text-gray-500 text-center italic">
-              * Доставка гарантирована системой Хранителей
-            </p>
-          </div>
-        </div>
-{/* ФОРМА КАПСУЛЫ ВРЕМЕНИ */}
-<div className="rounded-3xl bg-[#1e1e1e] p-6 shadow-2xl mt-4 border border-white/10">
-  <div className="text-xs uppercase tracking-[0.3em] text-blue-400 font-bold mb-4">Создать цифровую капсулу</div>
-  
-  <div className="space-y-4">
-    {/* Поле Кому */}
-    <input 
-      type="text" 
-      placeholder="Кому (Email или @Telegram)" 
-      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white outline-none focus:border-blue-500 transition-all"
-    />
-    
-    {/* Поле Дата */}
-    <div className="text-[10px] text-white/30 uppercase ml-2">Дата вскрытия:</div>
-    <input 
-      type="date" 
-      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white outline-none focus:border-blue-500"
-    />
-    
-    {/* Поле Денежный подарок */}
-    <div className="flex items-center gap-3 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-2xl">
-      <span className="text-2xl">💰</span>
-      <div className="flex-grow">
-        <input 
-          type="text" 
-          placeholder="Сумма или ссылка на банк" 
-          className="w-full bg-transparent text-white text-sm outline-none placeholder:text-yellow-500/50"
-        />
-      </div>
-    </div>
-    
-    {/* Кнопка создания */}
-    <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 rounded-2xl text-lg shadow-lg shadow-blue-500/20 active:scale-95 transition-all">
-      ЗАПЕЧАТАТЬ И ОТПРАВИТЬ 🔒
-    </button>
-  </div>
-  
-  <p className="mt-4 text-[10px] text-gray-500 text-center italic">
-    * Данные будут зашифрованы и доставлены в указанный срок.
-  </p>
-</div>
-  <p className="mt-3 text-[10px] text-gray-500 text-center">
-    * Мы отправим уведомление Хранителю, если получатель не выйдет на связь.
-  </p>
-</div>
-        
-      </div>
-    </div>
-  )
-
-  const renderShop = () => (
-    <div className="flex flex-1 flex-col gap-5">
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="text-xs uppercase tracking-[0.3em] text-white/50">Shop</div>
-          <div className="mt-1 text-xl font-semibold text-white">
-            Upgrade your career
-          </div>
-        </div>
-        <HelpTip text="New categories unlock special boosts and accessories." />
-      </div>
-      <div className="grid grid-cols-3 gap-3 rounded-3xl bg-[#1e1e1e] p-2">
-        {['Jobs', 'Boosts', 'Accessories'].map((category) => (
-          <button
-            key={category}
-            onClick={() => setSelectedCategory(category)}
-            className={`rounded-2xl px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] transition-all ${
-              selectedCategory === category
-                ? 'bg-[#00ff9d] text-[#0b0b0b]'
-                : 'text-white/60 hover:text-white'
-            }`}
-          >
-            {category}
-          </button>
-        ))}
-      </div>
-      {selectedCategory !== 'Jobs' ? (
-        <div className="flex flex-1 flex-col items-center justify-center rounded-3xl border border-white/5 bg-[#1e1e1e] p-6 text-center text-white/60">
-          <Sparkles size={28} className="text-[#00ff9d]" />
-          <div className="mt-3 text-lg font-semibold text-white">
-            New items incoming
-          </div>
-          <div className="mt-2 text-sm text-white/50">
-            Stay tuned for premium boosts and accessories.
-          </div>
-        </div>
-      ) : (
-        <div className="grid gap-4">
-          {JOBS.map((job) => (
-            <JobCard
-              key={job.id}
-              job={job}
-              owned={inventory.includes(job.id)}
-              selected={currentJobId === job.id}
-              onBuy={() => handlePurchase(job)}
-              onSelect={() => handleSelect(job)}
-            />
-          ))}
-        </div>
-      )}
-    </div>
-  )
-
-  const renderTasks = () => (
-    <div className="flex flex-1 flex-col gap-5">
-      <div className="flex items-start justify-between">
-        <div>
-          <div className="text-xs uppercase tracking-[0.3em] text-white/50">Profile</div>
-          <div className="mt-1 text-xl font-semibold text-white">
-            Business dashboard
-          </div>
-        </div>
-        <HelpTip text="Complete tasks to earn extra bonuses." />
-      </div>
-      <div className="grid gap-3 rounded-3xl bg-[#1e1e1e] p-4">
-        <div className="flex items-center justify-between rounded-2xl bg-[#121212] px-4 py-3">
-          <div className="flex items-center gap-2 text-sm text-white/70">
-            <Trophy size={16} className="text-[#00ff9d]" />
-            Total earned
-          </div>
-          <div className="text-lg font-semibold text-white">{totalEarned}</div>
-        </div>
-        <div className="flex items-center justify-between rounded-2xl bg-[#121212] px-4 py-3">
-          <div className="flex items-center gap-2 text-sm text-white/70">
-            <Crown size={16} className="text-[#00ff9d]" />
-            Registration date
-          </div>
-          <div className="text-sm text-white/80">
-            {new Date(regDate).toLocaleDateString()}
-          </div>
-        </div>
-        <div className="flex items-center justify-between rounded-2xl bg-[#121212] px-4 py-3">
-          <div className="flex items-center gap-2 text-sm text-white/70">
-            <Sparkles size={16} className="text-[#00ff9d]" />
-            Referrals
-          </div>
-          <div className="text-lg font-semibold text-white">{referrals}</div>
-        </div>
-      </div>
-      <div className="rounded-3xl bg-[#1e1e1e] p-5">
-        <div className="text-xs uppercase tracking-[0.3em] text-white/50">Tasks</div>
-        <div className="mt-4 grid gap-3">
-          {TASKS.map((task) => (
-            <div
-              key={task.id}
-              className="flex items-center justify-between rounded-2xl border border-white/10 bg-[#121212] px-4 py-3"
-            >
-              <div>
-                <div className="text-sm text-white">{task.title}</div>
-                <div className="text-xs text-white/50">{task.reward}</div>
-              </div>
-              <button className="rounded-full bg-[#00ff9d] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#0b0b0b]">
-                Start
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-
-  const renderEarn = () => (
-    <div className="flex flex-1 flex-col gap-4">
-      <div className="rounded-3xl bg-[#1e1e1e] p-5">
-        <div className="text-xs uppercase tracking-[0.3em] text-white/50">Earn</div>
-        <div className="mt-2 text-xl font-semibold text-white">Boost your income</div>
-        <div className="mt-4 grid gap-3">
-          <div className="rounded-2xl bg-[#121212] p-4 text-sm text-white/70">
-            Complete daily work sessions to stack bonuses.
-          </div>
-          <div className="rounded-2xl bg-[#121212] p-4 text-sm text-white/70">
-            Check the shop for premium upgrades.
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-
-  const renderFriends = () => (
-    <div className="flex flex-1 flex-col gap-4">
-      <div className="rounded-3xl bg-[#1e1e1e] p-5">
-        <div className="text-xs uppercase tracking-[0.3em] text-white/50">Friends</div>
-        <div className="mt-2 text-xl font-semibold text-white">Referral program</div>
-        <div className="mt-4 rounded-2xl bg-[#121212] p-4 text-sm text-white/70">
-          Invite friends to earn bonuses and unlock exclusive roles.
-        </div>
-      </div>
-    </div>
-  )
-
-  const canAfford = modalItem ? balance >= modalItem.price : false
-
-  const content = {
-    home: renderHome(),
-    shop: renderShop(),
-    tasks: renderTasks(),
-    earn: renderEarn(),
-    friends: renderFriends(),
-  }[activeTab]
+  const [isLocked, setIsLocked] = useState(false);
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-[#121212] px-4 py-5">
-      <div className="flex flex-1 flex-col gap-4 overflow-hidden">
-        <div className="flex h-full flex-col gap-4">{content}</div>
+    <div className="min-h-screen bg-[#0a0a0a] text-white p-4 font-sans flex flex-col items-center">
+      {/* Шапка */}
+      <div className="w-full max-w-md flex flex-col items-center mt-8 mb-6">
+        <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center shadow-lg shadow-blue-500/20 mb-4">
+          <span className="text-4xl text-white">🔒</span>
+        </div>
+        <h1 className="text-2xl font-bold tracking-tight">СЕМЕЙНЫЙ АРХИВ</h1>
+        <p className="text-blue-400 text-[10px] uppercase tracking-[0.3em] mt-1">Капсула времени</p>
       </div>
-      <div className="pt-4">
-        <Navigation activeTab={activeTab} onChange={setActiveTab} />
+
+      {/* Основная форма */}
+      <div className="w-full max-w-md bg-[#161616] rounded-[32px] p-6 shadow-2xl border border-white/5">
+        <div className="space-y-4">
+          <div>
+            <label className="text-[10px] text-white/30 uppercase ml-2 mb-1 block">Получатель</label>
+            <input 
+              type="text" 
+              placeholder="Email или @Telegram" 
+              className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white outline-none focus:border-blue-500 transition-all"
+            />
+          </div>
+
+          <div>
+            <label className="text-[10px] text-white/30 uppercase ml-2 mb-1 block">Дата вскрытия</label>
+            <input 
+              type="date" 
+              className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white outline-none focus:border-blue-500"
+            />
+          </div>
+
+          <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-2xl p-4">
+            <label className="text-[10px] text-yellow-500 uppercase ml-2 mb-1 block font-bold">Денежный подарок</label>
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">💰</span>
+              <input 
+                type="text" 
+                placeholder="Сумма или ссылка на банк" 
+                className="w-full bg-transparent text-white outline-none placeholder:text-yellow-500/30"
+              />
+            </div>
+          </div>
+
+          <button 
+            onClick={() => {
+              setIsLocked(true);
+              alert("Капсула успешно создана! Мы свяжемся с Хранителем.");
+            }}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-5 rounded-2xl text-lg shadow-lg shadow-blue-500/20 active:scale-95 transition-all mt-4"
+          >
+            {isLocked ? "ЗАПЕЧАТАНО ✔️" : "ЗАПЕЧАТАТЬ ПАМЯТЬ"}
+          </button>
+        </div>
+        
+        <p className="text-[9px] text-gray-500 text-center mt-4 italic">
+          * Послание будет доставлено даже через 30 лет через систему доверенных Хранителей.
+        </p>
       </div>
-      <SuccessModal
-        open={Boolean(modalItem)}
-        item={modalItem}
-        canAfford={canAfford}
-        onConfirm={confirmPurchase}
-        onClose={() => setModalItem(null)}
-      />
+
+      {/* Меню снизу */}
+      <div className="fixed bottom-6 w-full max-w-xs bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-4 flex justify-around">
+        <div className="flex flex-col items-center">
+          <span className="text-xl">🏠</span>
+          <span className="text-[9px] text-white/50">Создать</span>
+        </div>
+        <div className="flex flex-col items-center opacity-30">
+          <span className="text-xl">📂</span>
+          <span className="text-[9px] text-white/50">Архив</span>
+        </div>
+        <div className="flex flex-col items-center opacity-30">
+          <span className="text-xl">⚙️</span>
+          <span className="text-[9px] text-white/50">Опции</span>
+        </div>
+      </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
