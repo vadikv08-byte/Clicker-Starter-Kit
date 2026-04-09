@@ -164,32 +164,47 @@ function App() {
             </div>
           </div>
         </div>
-      </div>
-      <div className="rounded-3xl bg-[#1e1e1e] p-5 shadow-[0_0_40px_rgba(0,0,0,0.6)]">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-xs uppercase tracking-[0.3em] text-white/50">
-              Action
-            <div className="rounded-3xl bg-[#1e1e1e] p-5 shadow-lg mt-4">
-  <div className="text-xs uppercase tracking-[0.3em] text-white/50">Создать капсулу</div>
+{/* ФОРМА КАПСУЛЫ ВРЕМЕНИ */}
+<div className="rounded-3xl bg-[#1e1e1e] p-6 shadow-2xl mt-4 border border-white/10">
+  <div className="text-xs uppercase tracking-[0.3em] text-blue-400 font-bold mb-4">Создать цифровую капсулу</div>
   
-  <div className="mt-4 space-y-3">
+  <div className="space-y-4">
+    {/* Поле Кому */}
     <input 
       type="text" 
       placeholder="Кому (Email или @Telegram)" 
-      className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white outline-none focus:border-blue-500"
+      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white outline-none focus:border-blue-500 transition-all"
     />
     
+    {/* Поле Дата */}
+    <div className="text-[10px] text-white/30 uppercase ml-2">Дата вскрытия:</div>
     <input 
       type="date" 
-      className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white outline-none"
+      className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white outline-none focus:border-blue-500"
     />
     
-    <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all active:scale-95">
-      ЗАПЕЧАТАТЬ ПАМЯТЬ 🔒
-    </button>
+    {/* Поле Денежный подарок */}
+    <div className="flex items-center gap-3 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-2xl">
+      <span className="text-2xl">💰</span>
+      <div className="flex-grow">
+        <input 
+          type="text" 
+          placeholder="Сумма или ссылка на банк" 
+          className="w-full bg-transparent text-white text-sm outline-none placeholder:text-yellow-500/50"
+        />
+      </div>
     </div>
+    
+    {/* Кнопка создания */}
+    <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 rounded-2xl text-lg shadow-lg shadow-blue-500/20 active:scale-95 transition-all">
+      ЗАПЕЧАТАТЬ И ОТПРАВИТЬ 🔒
+    </button>
+  </div>
   
+  <p className="mt-4 text-[10px] text-gray-500 text-center italic">
+    * Данные будут зашифрованы и доставлены в указанный срок.
+  </p>
+</div>
   <p className="mt-3 text-[10px] text-gray-500 text-center">
     * Мы отправим уведомление Хранителю, если получатель не выйдет на связь.
   </p>
