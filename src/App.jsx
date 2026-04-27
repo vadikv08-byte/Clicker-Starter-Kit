@@ -4,7 +4,7 @@ import './App.css';
 
 // ВСТАВЬ СВОИ ДАННЫЕ ИЗ SUPABASE НИЖЕ
 const supabaseUrl = 'https://ozkiafjaupilvtmtvkhr.supabase.co'; 
-const supabaseAnonKey = 'ТВОЙ_КЛЮЧ_ANON_PUBLIC'; 
+const supabaseAnonKey = '8382077398:AAGy-ftFiO_t3_s0RslBbB5bcLSINftCFmo'; 
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 const tg = window.Telegram?.WebApp;
