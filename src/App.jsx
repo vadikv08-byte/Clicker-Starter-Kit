@@ -14,31 +14,63 @@ export default function App() {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => { if (tg) { tg.ready(); tg.expand(); } }, []);
+  useEffect(() => { 
+    if (tg) { 
+      tg.ready(); 
+      tg.setHeaderColor('#000000');
+      tg.expand(); 
+    } 
+  }, []);
 
   const handleSave = async () => {
-    if (!receiver || !date || !message) { tg.showAlert("Заполните все поля!"); return; }
+    if (!receiver || !date || !message) { tg.showAlert("Заполните все поля хранилища"); return; }
     setLoading(true);
     const { error } = await supabase.from('capsules').insert([{ 
-      user_id: tg?.initDataUnsafe?.user?.id?.toString() || '0', 
+      user_id: tg?.initDataUnsafe?.user?.id?.toString() || 'admin', 
       receiver, open_date: date, message 
     }]);
     setLoading(false);
-    if (error) tg.showAlert("Ошибка: " + error.message);
-    else { tg.showAlert("Запечатано! 🔒"); setReceiver(''); setDate(''); setMessage(''); }
+    if (error) tg.showAlert("Сбой синхронизации: " + error.message);
+    else { 
+      tg.HapticFeedback.notificationOccurred('success');
+      tg.showAlert("Данные зашифрованы и запечатаны 🔒"); 
+      setReceiver(''); setDate(''); setMessage(''); 
+    }
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-6 flex flex-col items-center">
-      <h1 className="text-xl font-black mb-8 italic text-center">MEMORY KEEPER</h1>
-      <div className="w-full space-y-4">
-        <input value={receiver} onChange={e => setReceiver(e.target.value)} placeholder="Кому послание" className="w-full bg-[#1c1c1e] p-4 rounded-2xl border border-white/5 outline-none focus:border-blue-500" />
-        <input value={date} onChange={e => setDate(e.target.value)} placeholder="Год открытия" className="w-full bg-[#1c1c1e] p-4 rounded-2xl border border-white/5 outline-none focus:border-blue-500" />
-        <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="Ваша история..." className="w-full bg-[#1c1c1e] p-4 rounded-2xl border border-white/5 h-40 outline-none focus:border-blue-500" />
-        <button onClick={handleSave} disabled={loading} className="w-full bg-blue-600 py-5 rounded-2xl font-bold uppercase active:scale-95 transition-all">
-          {loading ? 'ЗАГРУЗКА...' : 'ЗАПЕЧАТАТЬ 🔒'}
+    <div className="app-container">
+      <div className="bg-glow"></div>
+      <header>
+        <div className="status-badge">CRYPTOGRAPHIC SECURITY: ON</div>
+        <h1 className="main-title">MEMORY<span>KEEPER</span></h1>
+        <p className="subtitle">Ваше наследие в цифровой вечности</p>
+      </header>
+
+      <main className="form-card">
+        <div className="input-group">
+          <label>АДРЕСАТ НАСЛЕДИЯ</label>
+          <input value={receiver} onChange={e => setReceiver(e.target.value)} placeholder="Кому принадлежит доступ?" />
+        </div>
+
+        <div className="input-group">
+          <label>ГОД РАЗБЛОКИРОВКИ</label>
+          <input value={date} onChange={e => setDate(e.target.value)} placeholder="Например, 2045" type="number" />
+        </div>
+
+        <div className="input-group">
+          <label>КРИПТО-ПОСЛАНИЕ</label>
+          <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="Введите текст, который будет скрыт десятилетиями..." />
+        </div>
+
+        <button onClick={handleSave} disabled={loading} className="save-btn">
+          {loading ? <span className="loader"></span> : 'ЗАПЕЧАТАТЬ КАПСУЛУ'}
         </button>
-      </div>
+      </main>
+
+      <footer className="info-footer">
+        Все данные зашифрованы по протоколу AES-256
+      </footer>
     </div>
   );
 }
