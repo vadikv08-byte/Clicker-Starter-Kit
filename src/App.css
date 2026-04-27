@@ -1,44 +1,39 @@
 :root {
-  --bg-black: #000000;
-  --card-bg: rgba(28, 28, 30, 0.8);
-  --accent-blue: #007AFF;
-  --accent-gold: #FFD700;
-  --text-gray: #8E8E93;
+  --bg: #000000;
+  --card: #1c1c1e;
+  --accent: #007aff;
+  --text-secondary: #8e8e93;
 }
 
-body { margin: 0; background: var(--bg-black); color: white; font-family: -apple-system, sans-serif; }
+body { margin: 0; background: var(--bg); color: white; font-family: -apple-system, sans-serif; }
 
-.app-container { min-height: 100vh; padding: 20px 20px 100px 20px; position: relative; }
+.app-container { min-height: 100vh; padding: 20px 20px 100px 20px; }
 
-/* Вкладки навигации */
 .nav-bar {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  height: 70px; background: rgba(20, 20, 20, 0.95);
-  backdrop-filter: blur(10px); border-top: 1px solid rgba(255,255,255,0.1);
-  display: flex; justify-content: space-around; align-items: center; z-index: 100;
+  position: fixed; bottom: 0; left: 0; right: 0; height: 80px;
+  background: rgba(28, 28, 30, 0.95); backdrop-filter: blur(10px);
+  display: flex; justify-content: space-around; align-items: center;
+  border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000;
 }
 
-.nav-item { color: var(--text-gray); font-size: 11px; text-align: center; cursor: pointer; }
-.nav-item.active { color: var(--accent-blue); }
+.nav-item { 
+  display: flex; flex-direction: column; align-items: center; 
+  color: var(--text-secondary); font-size: 10px; gap: 4px;
+}
 
-/* Карточки и инпуты */
+.nav-item.active { color: var(--accent); }
+
 .glass-card {
-  background: var(--card-bg); border-radius: 24px; padding: 20px;
-  border: 1px solid rgba(255,255,255,0.05); margin-top: 20px;
-}
-
-.premium-badge {
-  background: linear-gradient(90deg, #FFD700, #FFA500);
-  color: black; font-size: 10px; font-weight: 800;
-  padding: 4px 12px; border-radius: 20px; display: inline-block;
+  background: var(--card); border-radius: 20px; padding: 20px;
+  margin-top: 20px; border: 1px solid rgba(255,255,255,0.05);
 }
 
 input, textarea {
   width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 12px; padding: 12px; color: white; margin-top: 10px; outline: none;
+  border-radius: 12px; padding: 14px; color: white; margin-top: 10px; box-sizing: border-box;
 }
 
 .action-btn {
-  width: 100%; background: var(--accent-blue); border: none;
-  padding: 16px; border-radius: 16px; color: white; font-weight: 700; margin-top: 20px;
+  width: 100%; background: var(--accent); border: none; padding: 16px;
+  border-radius: 16px; color: white; font-weight: 700; margin-top: 20px;
 }
