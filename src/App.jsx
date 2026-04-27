@@ -38,7 +38,7 @@ export default function App() {
     <div className="app-container">
       {activeTab === 'create' && (
         <section>
-          <h1 style={{fontSize: '28px', fontWeight: '800'}}>Создать</h1>
+          <h1 style={{fontSize: '28px', fontWeight: '800', color: 'white'}}>Создать</h1>
           <div className="glass-card">
             <label style={{color: '#8e8e93', fontSize: '12px'}}>КОМУ</label>
             <input value={receiver} onChange={e => setReceiver(e.target.value)} placeholder="@username" />
@@ -53,8 +53,8 @@ export default function App() {
 
       {activeTab === 'archive' && (
         <section>
-          <h1 style={{fontSize: '28px', fontWeight: '800'}}>Архив</h1>
-          <div className="glass-card" style={{textAlign: 'center', padding: '50px 20px'}}>
+          <h1 style={{fontSize: '28px', fontWeight: '800', color: 'white'}}>Архив</h1>
+          <div className="glass-card" style={{textAlign: 'center', padding: '50px 20px', color: 'white'}}>
             <div style={{fontSize: '48px', marginBottom: '15px'}}>📦</div>
             <p style={{color: '#8e8e93'}}>Ваш архив пока пуст</p>
           </div>
@@ -63,7 +63,7 @@ export default function App() {
 
       {activeTab === 'pro' && (
         <section>
-          <h1 style={{fontSize: '28px', fontWeight: '800'}}>Premium</h1>
+          <h1 style={{fontSize: '28px', fontWeight: '800', color: 'white'}}>Premium</h1>
           <div className="glass-card">
             <h3 style={{color: '#FFD700'}}>Тариф "Вечность" 💎</h3>
             <p style={{color: '#8e8e93', fontSize: '14px'}}>Хранение до 100 лет и видео-послания.</p>
