@@ -1,11 +1,30 @@
-body { background: #000; color: #fff; margin: 0; font-family: sans-serif; }
-.app-container { padding: 20px; padding-bottom: 100px; }
-.title { font-size: 28px; font-weight: 900; margin-bottom: 20px; text-transform: uppercase; }
-.glass-card { background: #1c1c1e; border-radius: 18px; padding: 20px; border: 1px solid #2c2c2e; }
-.input-label { color: #8e8e93; font-size: 11px; font-weight: 700; display: block; margin-bottom: 8px; }
-input, textarea { width: 100%; background: #2c2c2e; border: none; border-radius: 12px; padding: 12px; color: #fff; box-sizing: border-box; }
-.action-btn { width: 100%; background: #007aff; border: none; padding: 15px; border-radius: 12px; color: #fff; font-weight: 800; margin-top: 20px; }
-.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: #1c1c1e; display: flex; border-top: 1px solid #2c2c2e; }
-.bottom-nav button { flex: 1; background: none; border: none; color: #8e8e93; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.bottom-nav button.active { color: #007aff; }
-.center { text-align: center; }
+body { background: #000; color: #fff; margin: 0; font-family: -apple-system, system-ui, sans-serif; overflow-x: hidden; }
+.app-container { padding: 20px; padding-bottom: 100px; min-height: 100vh; }
+.fade-in { animation: fadeIn 0.3s ease-in; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.title { font-size: 32px; font-weight: 900; margin-bottom: 25px; letter-spacing: -1px; }
+.glass-card { background: #1c1c1e; border-radius: 20px; padding: 20px; border: 1px solid #2c2c2e; margin-bottom: 15px; }
+.input-label { color: #8e8e93; font-size: 11px; font-weight: 800; display: block; margin-bottom: 8px; text-transform: uppercase; }
+
+input, textarea { width: 100%; background: #2c2c2e; border: 1px solid #3a3a3c; border-radius: 14px; padding: 14px; color: #fff; font-size: 16px; transition: 0.2s; }
+input:focus { border-color: #007aff; outline: none; }
+
+.action-btn { width: 100%; background: #007aff; border: none; padding: 18px; border-radius: 16px; color: #fff; font-weight: 700; font-size: 16px; margin-top: 20px; cursor: pointer; }
+.action-btn:disabled { opacity: 0.5; }
+
+.capsule-item { position: relative; }
+.capsule-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
+.status-badge { background: #3a3a3c; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; }
+.year-tag { color: #007aff; font-weight: 800; }
+.truncate { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: #8e8e93; font-size: 14px; margin-top: 5px; }
+
+.pro-badge { font-size: 20px; font-weight: 800; color: #ffd700; margin-bottom: 15px; }
+.pro-features { list-style: none; padding: 0; color: #8e8e93; line-height: 2; }
+.pro-btn { width: 100%; background: linear-gradient(45deg, #ffd700, #ffae00); border: none; padding: 15px; border-radius: 14px; font-weight: 800; margin-top: 20px; }
+
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: rgba(28, 28, 30, 0.95); display: flex; border-top: 1px solid #2c2c2e; backdrop-filter: blur(10px); }
+.bottom-nav button { flex: 1; background: none; border: none; color: #8e8e93; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.2s; }
+.bottom-nav button.active { color: #007aff; transform: translateY(-2px); }
+.nav-icon { font-size: 22px; margin-bottom: 4px; }
+.gray-text { color: #8e8e93; }
