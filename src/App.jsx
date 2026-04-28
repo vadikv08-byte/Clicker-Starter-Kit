@@ -4,7 +4,7 @@ import './App.css';
 
 const supabase = createClient(
   'https://ozkiafjaupilvtmtvkhr.supabase.co',
-  'sb_publishable_AtquiuoGJilSzhSFc_8lLg_qcaxX6C7' 
+  'sb_publishable_AtquiuoGjil5zhSfC_8llG_qcaxXb6f00e909564883445588383838383838383' 
 );
 
 const tg = window.Telegram?.WebApp;
@@ -52,10 +52,10 @@ export default function App() {
     setLoading(false);
 
     if (error) {
-      tg?.showAlert("Ошибка: " + error.message);
+      tg?.showAlert("Ошибка базы: " + error.message);
     } else {
       tg?.HapticFeedback?.impactOccurred('medium');
-      tg?.showAlert("Запечатано! 🔒");
+      tg?.showAlert("Послание запечатано! 🔒");
       setReceiver(''); setOpenDate(''); setMessage('');
       fetchCapsules();
       setActiveTab('archive');
@@ -70,17 +70,22 @@ export default function App() {
           <div className="glass-card">
             <div className="input-group">
               <label className="input-label">КОМУ ПОСЛАНИЕ</label>
-              <input value={receiver} onChange={e => setReceiver(e.target.value)} placeholder="@username или имя" />
+              <input value={receiver} onChange={e => setReceiver(e.target.value)} placeholder="@username" />
             </div>
             
             <div className="input-group">
-              <label className="input-label">КОГДА ОТКРЫТЬ (ДАТА И ВРЕМЯ)</label>
+              <label className="input-label">ДАТА И ВРЕМЯ ОТКРЫТИЯ</label>
               <input type="datetime-local" value={openDate} onChange={e => setOpenDate(e.target.value)} className="date-input" />
             </div>
             
             <div className="input-group">
               <label className="input-label">ВАША ИСТОРИЯ</label>
-              <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="Напишите послание в будущее..." />
+              <textarea 
+                value={message} 
+                onChange={e => setMessage(e.target.value)} 
+                placeholder="Напишите что-то важное..." 
+                className="story-textarea"
+              />
             </div>
             
             <button onClick={saveCapsule} className="action-btn" disabled={loading}>
@@ -96,7 +101,7 @@ export default function App() {
           {capsules.length === 0 ? (
             <div className="glass-card center">
               <span style={{fontSize: '50px'}}>📦</span>
-              <p>У вас пока нет запечатанных писем</p>
+              <p>Ваш список пуст</p>
             </div>
           ) : (
             capsules.map(cap => (
@@ -119,39 +124,26 @@ export default function App() {
             <div className="pro-header">
               <span className="pro-icon">💎</span>
               <h2 className="pro-title">VIP ДОСТУП</h2>
-              <p className="pro-subtitle">Максимальные возможности для ваших воспоминаний</p>
             </div>
-            
             <ul className="pro-features">
-              <li>✅ Хранение посланий до 100 лет</li>
-              <li>✅ Фото, видео и аудио файлы (скоро)</li>
-              <li>✅ Уведомление получателю в Telegram</li>
-              <li>✅ Точное время открытия (до минуты)</li>
-              <li>✅ Личный архив без ограничений</li>
+              <li>✅ Хранение до 100 лет</li>
+              <li>✅ Фото и видео (скоро)</li>
+              <li>✅ Без ограничений</li>
             </ul>
-
-            <div className="pro-footer">
-              <div className="price-tag">
-                <span>Единоразовый доступ:</span>
-                <span className="price">499 ₽</span>
-              </div>
-              <button onClick={() => tg?.showAlert("Оплата через Telegram Stars скоро будет доступна!")} className="pro-btn">
-                СТАТЬ VIP ⭐
-              </button>
-            </div>
+            <button onClick={() => tg?.showAlert("Скоро в обновлении!")} className="pro-btn">УЛУЧШИТЬ ⭐</button>
           </div>
         </div>
       )}
 
       <nav className="bottom-nav">
         <button onClick={() => setActiveTab('create')} className={activeTab === 'create' ? 'active' : ''}>
-          <span className="nav-icon">➕</span> Создать
+          <span>➕</span> Создать
         </button>
         <button onClick={() => setActiveTab('archive')} className={activeTab === 'archive' ? 'active' : ''}>
-          <span className="nav-icon">📦</span> Архив
+          <span>📦</span> Архив
         </button>
         <button onClick={() => setActiveTab('pro')} className={activeTab === 'pro' ? 'active' : ''}>
-          <span className="nav-icon">⭐</span> PRO
+          <span>⭐</span> PRO
         </button>
       </nav>
     </div>
