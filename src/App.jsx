@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import './App.css';
 
-// ЗАМЕНИ 'ТВОЙ_ANON_KEY' НА РЕАЛЬНЫЙ КЛЮЧ ИЗ SUPABASE
+// ПОСЛЕ НАЖАТИЯ "RESUME" ВОЗЬМИ КЛЮЧ В SETTINGS -> API
 const supabase = createClient(
   'https://ozkiafjaupilvtmtvkhr.supabase.co',
-  'ТВОЙ_ANON_KEY' 
+  'ВСТАВЬ_СЮДА_СВОЙ_ANON_KEY' 
 );
 
 const tg = window.Telegram?.WebApp;
@@ -15,9 +15,8 @@ export default function App() {
   const [capsules, setCapsules] = useState([]);
   const [loading, setLoading] = useState(false);
   
-  // Поля формы
   const [receiver, setReceiver] = useState('');
-  const [openDate, setOpenDate] = useState(''); // Сюда запишется дата и время
+  const [openDate, setOpenDate] = useState(''); 
   const [message, setMessage] = useState('');
 
   const userId = tg?.initDataUnsafe?.user?.id?.toString() || '0';
@@ -25,8 +24,8 @@ export default function App() {
   useEffect(() => {
     tg?.ready();
     tg?.expand();
-    fetchCapsules();
-  }, []);
+    if (userId !== '0') fetchCapsules();
+  }, [userId]);
 
   const fetchCapsules = async () => {
     const { data, error } = await supabase
@@ -54,13 +53,11 @@ export default function App() {
     setLoading(false);
 
     if (error) {
-      tg?.showAlert("Ошибка: " + error.message);
+      tg?.showAlert("Ошибка базы: " + error.message);
     } else {
       tg?.HapticFeedback?.impactOccurred('medium');
       tg?.showAlert("Запечатано! 🔒");
-      setReceiver('');
-      setOpenDate('');
-      setMessage('');
+      setReceiver(''); setOpenDate(''); setMessage('');
       fetchCapsules();
       setActiveTab('archive');
     }
@@ -73,26 +70,18 @@ export default function App() {
           <h1 className="title">СОЗДАТЬ</h1>
           <div className="glass-card">
             <label className="input-label">КОМУ ПОСЛАНИЕ</label>
-            <input 
-              value={receiver} 
-              onChange={e => setReceiver(e.target.value)} 
-              placeholder="@username" 
-            />
+            <input value={receiver} onChange={e => setReceiver(e.target.value)} placeholder="@username" />
             
             <label className="input-label" style={{marginTop: '15px'}}>ДАТА И ВРЕМЯ ОТКРЫТИЯ</label>
             <input 
-              type="datetime-local" // Позволяет выбрать день, месяц и время
+              type="datetime-local" 
               value={openDate}
               onChange={e => setOpenDate(e.target.value)}
               className="date-input"
             />
             
             <label className="input-label" style={{marginTop: '15px'}}>ВАША ИСТОРИЯ</label>
-            <textarea 
-              value={message} 
-              onChange={e => setMessage(e.target.value)} 
-              placeholder="Напишите что-то важное..." 
-            />
+            <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="Напишите что-то важное..." />
             
             <button onClick={saveCapsule} className="action-btn" disabled={loading}>
               {loading ? 'СОХРАНЕНИЕ...' : 'ЗАПЕЧАТАТЬ 🔒'}
