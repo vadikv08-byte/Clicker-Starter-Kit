@@ -2,160 +2,126 @@ import React, { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import './App.css';
 
+// ЗАМЕНИ 'ТВОЙ_ANON_KEY' НА РЕАЛЬНЫЙ КЛЮЧ ИЗ SUPABASE
 const supabase = createClient(
-  'https://ozkiafjaupilvtmtvkhr.supabase.co', 
-  'sb_publishable_AtquiuoGJilSzhSFc_8llG_qcaxXb6f00e9095648834455883838383838383'
+  'https://ozkiafjaupilvtmtvkhr.supabase.co',
+  'ТВОЙ_ANON_KEY' 
 );
+
 const tg = window.Telegram?.WebApp;
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('create');
   const [capsules, setCapsules] = useState([]);
-  const [formData, setFormData] = useState({ receiver: '', date: '', message: '' });
   const [loading, setLoading] = useState(false);
+  
+  // Поля формы
+  const [receiver, setReceiver] = useState('');
+  const [openDate, setOpenDate] = useState(''); // Сюда запишется дата и время
+  const [message, setMessage] = useState('');
 
-  const userId = tg?.initDataUnsafe?.user?.id?.toString() || 'demo_user';
+  const userId = tg?.initDataUnsafe?.user?.id?.toString() || '0';
 
-  // Загрузка писем из базы
+  useEffect(() => {
+    tg?.ready();
+    tg?.expand();
+    fetchCapsules();
+  }, []);
+
   const fetchCapsules = async () => {
-    setLoading(true);
     const { data, error } = await supabase
       .from('capsules')
       .select('*')
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
-    
     if (!error) setCapsules(data);
-    setLoading(false);
   };
 
-  useEffect(() => {
-    if (tg) {
-      tg.ready();
-      tg.expand();
-    }
-    fetchCapsules();
-  }, [userId]);
-
   const saveCapsule = async () => {
-    if (!formData.receiver || !formData.date || !formData.message) {
-      tg?.showAlert("Заполните все поля");
+    if (!receiver || !openDate || !message) {
+      tg?.showAlert("Заполните все поля!");
       return;
     }
     setLoading(true);
+    
     const { error } = await supabase.from('capsules').insert([{
       user_id: userId,
-      receiver: formData.receiver,
-      open_date: formData.date,
-      message: formData.message
+      receiver: receiver,
+      open_date: openDate,
+      message: message
     }]);
+
+    setLoading(false);
 
     if (error) {
       tg?.showAlert("Ошибка: " + error.message);
     } else {
       tg?.HapticFeedback?.impactOccurred('medium');
-      // Очищаем форму и уходим в архив
-      setFormData({ receiver: '', date: '', message: '' });
-      await fetchCapsules(); // Обновляем список
-      setActiveTab('archive'); 
+      tg?.showAlert("Запечатано! 🔒");
+      setReceiver('');
+      setOpenDate('');
+      setMessage('');
+      fetchCapsules();
+      setActiveTab('archive');
     }
-    setLoading(false);
   };
 
   return (
     <div className="app-container">
-      <div className="main-content">
-        
-        {activeTab === 'create' && (
-          <section className="fade-in">
-            <h1 className="title">Создать</h1>
-            <div className="glass-card">
-              <label className="input-label">КОМУ ПОСЛАНИЕ</label>
-              <input 
-                value={formData.receiver} 
-                onChange={e => setFormData({...formData, receiver: e.target.value})} 
-                placeholder="@username или имя" 
-              />
-              
-              <label className="input-label" style={{marginTop:'15px'}}>ГОД ОТКРЫТИЯ</label>
-              <input 
-                value={formData.date} 
-                type="number"
-                onChange={e => setFormData({...formData, date: e.target.value})} 
-                placeholder="Напр: 2030" 
-              />
-              
-              <label className="input-label" style={{marginTop:'15px'}}>ВАША ИСТОРИЯ</label>
-              <textarea 
-                value={formData.message} 
-                onChange={e => setFormData({...formData, message: e.target.value})} 
-                placeholder="Напишите послание в будущее..." 
-                rows="5" 
-              />
-              
-              <button onClick={saveCapsule} className="action-btn" disabled={loading}>
-                {loading ? 'ЗАПЕЧАТЫВАЕМ...' : 'ЗАПЕЧАТАТЬ 🔒'}
-              </button>
-            </div>
-          </section>
-        )}
+      {activeTab === 'create' && (
+        <div className="fade-in">
+          <h1 className="title">СОЗДАТЬ</h1>
+          <div className="glass-card">
+            <label className="input-label">КОМУ ПОСЛАНИЕ</label>
+            <input 
+              value={receiver} 
+              onChange={e => setReceiver(e.target.value)} 
+              placeholder="@username" 
+            />
+            
+            <label className="input-label" style={{marginTop: '15px'}}>ДАТА И ВРЕМЯ ОТКРЫТИЯ</label>
+            <input 
+              type="datetime-local" // Позволяет выбрать день, месяц и время
+              value={openDate}
+              onChange={e => setOpenDate(e.target.value)}
+              className="date-input"
+            />
+            
+            <label className="input-label" style={{marginTop: '15px'}}>ВАША ИСТОРИЯ</label>
+            <textarea 
+              value={message} 
+              onChange={e => setMessage(e.target.value)} 
+              placeholder="Напишите что-то важное..." 
+            />
+            
+            <button onClick={saveCapsule} className="action-btn" disabled={loading}>
+              {loading ? 'СОХРАНЕНИЕ...' : 'ЗАПЕЧАТАТЬ 🔒'}
+            </button>
+          </div>
+        </div>
+      )}
 
-        {activeTab === 'archive' && (
-          <section className="fade-in">
-            <h1 className="title">Архив</h1>
-            {capsules.length === 0 ? (
-              <div className="glass-card center gray-text">
-                <div style={{fontSize: '50px', marginBottom: '10px'}}>📦</div>
-                <p>У вас пока нет запечатанных писем</p>
+      {activeTab === 'archive' && (
+        <div className="fade-in">
+          <h1 className="title">АРХИВ</h1>
+          {capsules.length === 0 ? (
+            <div className="glass-card center">Ваш список пуст</div>
+          ) : (
+            capsules.map(cap => (
+              <div key={cap.id} className="glass-card">
+                <div style={{display:'flex', justifyContent:'space-between', fontSize:'12px', color:'#8e8e93'}}>
+                  <span>ДЛЯ: {cap.receiver}</span>
+                  <span>{new Date(cap.open_date).toLocaleString('ru-RU')}</span>
+                </div>
               </div>
-            ) : (
-              <div className="capsule-list">
-                {capsules.map(item => (
-                  <div key={item.id} className="glass-card capsule-item">
-                    <div className="capsule-header">
-                      <span className="status-badge">ЗАКРЫТО</span>
-                      <span className="year-tag">{item.open_date}</span>
-                    </div>
-                    <div className="capsule-body">
-                      <strong>Для: {item.receiver}</strong>
-                      <p className="truncate">{item.message}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
-        )}
-
-        {activeTab === 'pro' && (
-          <section className="fade-in">
-            <h1 className="title">PREMIUM</h1>
-            <div className="glass-card pro-card">
-              <div className="pro-badge">VIP Доступ 💎</div>
-              <ul className="pro-features">
-                <li>✅ Хранение фото и видео</li>
-                <li>✅ Передача по наследству</li>
-                <li>✅ Срок хранения: 100 лет</li>
-              </ul>
-              <button className="pro-btn">УЛУЧШИТЬ ⭐</button>
-            </div>
-          </section>
-        )}
-      </div>
+            ))
+          )}
+        </div>
+      )}
 
       <nav className="bottom-nav">
-        <button className={activeTab === 'create' ? 'active' : ''} onClick={() => setActiveTab('create')}>
-          <span className="nav-icon">➕</span>
-          <small>Создать</small>
-        </button>
-        <button className={activeTab === 'archive' ? 'active' : ''} onClick={() => setActiveTab('archive')}>
-          <span className="nav-icon">📦</span>
-          <small>Архив</small>
-        </button>
-        <button className={activeTab === 'pro' ? 'active' : ''} onClick={() => setActiveTab('pro')}>
-          <span className="nav-icon">⭐</span>
-          <small>PRO</small>
-        </button>
+        <button onClick={() => setActiveTab('create')} className={activeTab === 'create' ? 'active' : ''}>➕ Создать</button>
+        <button onClick={() => setActiveTab('archive')} className={activeTab === 'archive' ? 'active' : ''}>📦 Архив</button>
       </nav>
     </div>
   );
