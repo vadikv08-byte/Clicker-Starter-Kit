@@ -10,39 +10,54 @@ const tg = window.Telegram?.WebApp;
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('create');
-  const [receiver, setReceiver] = useState('');
-  const [date, setDate] = useState('');
-  const [message, setMessage] = useState('');
+  const [capsules, setCapsules] = useState([]);
+  const [formData, setFormData] = useState({ receiver: '', date: '', message: '' });
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => { 
-    if (tg) { 
-      tg.ready(); 
-      tg.expand(); 
-      tg.headerColor = '#000000';
-    } 
-  }, []);
+  const userId = tg?.initDataUnsafe?.user?.id?.toString() || 'demo_user';
+
+  // Загрузка писем из базы
+  const fetchCapsules = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('capsules')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+    
+    if (!error) setCapsules(data);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (tg) {
+      tg.ready();
+      tg.expand();
+    }
+    fetchCapsules();
+  }, [userId]);
 
   const saveCapsule = async () => {
-    if (!receiver || !date || !message) { 
-      tg?.showAlert("Заполните все поля"); 
-      return; 
+    if (!formData.receiver || !formData.date || !formData.message) {
+      tg?.showAlert("Заполните все поля");
+      return;
     }
     setLoading(true);
-    const { error } = await supabase.from('capsules').insert([{ 
-      user_id: tg?.initDataUnsafe?.user?.id?.toString() || '0', 
-      receiver, 
-      open_date: date, 
-      message 
+    const { error } = await supabase.from('capsules').insert([{
+      user_id: userId,
+      receiver: formData.receiver,
+      open_date: formData.date,
+      message: formData.message
     }]);
 
     if (error) {
       tg?.showAlert("Ошибка: " + error.message);
-    } else { 
-      tg?.HapticFeedback?.impactOccurred('medium'); 
-      tg?.showAlert("Запечатано! 🔒"); 
+    } else {
+      tg?.HapticFeedback?.impactOccurred('medium');
+      // Очищаем форму и уходим в архив
+      setFormData({ receiver: '', date: '', message: '' });
+      await fetchCapsules(); // Обновляем список
       setActiveTab('archive'); 
-      setReceiver(''); setDate(''); setMessage('');
     }
     setLoading(false);
   };
@@ -50,43 +65,79 @@ export default function App() {
   return (
     <div className="app-container">
       <div className="main-content">
+        
         {activeTab === 'create' && (
-          <section>
+          <section className="fade-in">
             <h1 className="title">Создать</h1>
             <div className="glass-card">
               <label className="input-label">КОМУ ПОСЛАНИЕ</label>
-              <input value={receiver} onChange={e => setReceiver(e.target.value)} placeholder="@username" />
+              <input 
+                value={formData.receiver} 
+                onChange={e => setFormData({...formData, receiver: e.target.value})} 
+                placeholder="@username или имя" 
+              />
               
               <label className="input-label" style={{marginTop:'15px'}}>ГОД ОТКРЫТИЯ</label>
-              <input value={date} onChange={e => setDate(e.target.value)} type="number" placeholder="2045" />
+              <input 
+                value={formData.date} 
+                type="number"
+                onChange={e => setFormData({...formData, date: e.target.value})} 
+                placeholder="Напр: 2030" 
+              />
               
               <label className="input-label" style={{marginTop:'15px'}}>ВАША ИСТОРИЯ</label>
-              <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="Напишите что-то важное..." rows="5" />
+              <textarea 
+                value={formData.message} 
+                onChange={e => setFormData({...formData, message: e.target.value})} 
+                placeholder="Напишите послание в будущее..." 
+                rows="5" 
+              />
               
-              <button onClick={saveCapsule} className="action-btn">
-                {loading ? 'ЗАГРУЗКА...' : 'ЗАПЕЧАТАТЬ 🔒'}
+              <button onClick={saveCapsule} className="action-btn" disabled={loading}>
+                {loading ? 'ЗАПЕЧАТЫВАЕМ...' : 'ЗАПЕЧАТАТЬ 🔒'}
               </button>
             </div>
           </section>
         )}
 
         {activeTab === 'archive' && (
-          <section>
+          <section className="fade-in">
             <h1 className="title">Архив</h1>
-            <div className="glass-card center">
-              <div style={{fontSize: '50px'}}>📦</div>
-              <p style={{color: '#8e8e93'}}>Ваш список пуст</p>
-            </div>
+            {capsules.length === 0 ? (
+              <div className="glass-card center gray-text">
+                <div style={{fontSize: '50px', marginBottom: '10px'}}>📦</div>
+                <p>У вас пока нет запечатанных писем</p>
+              </div>
+            ) : (
+              <div className="capsule-list">
+                {capsules.map(item => (
+                  <div key={item.id} className="glass-card capsule-item">
+                    <div className="capsule-header">
+                      <span className="status-badge">ЗАКРЫТО</span>
+                      <span className="year-tag">{item.open_date}</span>
+                    </div>
+                    <div className="capsule-body">
+                      <strong>Для: {item.receiver}</strong>
+                      <p className="truncate">{item.message}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
         )}
 
         {activeTab === 'pro' && (
-          <section>
-            <h1 className="title">Premium</h1>
-            <div className="glass-card">
-              <h3 style={{color: '#FFD700', margin: '0'}}>VIP Доступ 💎</h3>
-              <p style={{color: '#8e8e93', fontSize: '14px'}}>Хранение файлов и видео на 100 лет.</p>
-              <button className="action-btn" style={{background: '#FFD700', color: '#000'}}>УЛУЧШИТЬ ⭐</button>
+          <section className="fade-in">
+            <h1 className="title">PREMIUM</h1>
+            <div className="glass-card pro-card">
+              <div className="pro-badge">VIP Доступ 💎</div>
+              <ul className="pro-features">
+                <li>✅ Хранение фото и видео</li>
+                <li>✅ Передача по наследству</li>
+                <li>✅ Срок хранения: 100 лет</li>
+              </ul>
+              <button className="pro-btn">УЛУЧШИТЬ ⭐</button>
             </div>
           </section>
         )}
@@ -94,13 +145,16 @@ export default function App() {
 
       <nav className="bottom-nav">
         <button className={activeTab === 'create' ? 'active' : ''} onClick={() => setActiveTab('create')}>
-          <span>➕</span><small>Создать</small>
+          <span className="nav-icon">➕</span>
+          <small>Создать</small>
         </button>
         <button className={activeTab === 'archive' ? 'active' : ''} onClick={() => setActiveTab('archive')}>
-          <span>📦</span><small>Архив</small>
+          <span className="nav-icon">📦</span>
+          <small>Архив</small>
         </button>
         <button className={activeTab === 'pro' ? 'active' : ''} onClick={() => setActiveTab('pro')}>
-          <span>⭐</span><small>PRO</small>
+          <span className="nav-icon">⭐</span>
+          <small>PRO</small>
         </button>
       </nav>
     </div>
