@@ -5,7 +5,7 @@ import './App.css';
 // Инициализация Supabase
 const supabase = createClient(
   'https://ozkiafjaupilvtmtvkhr.supabase.co',
-  'sb_publishable_AtqiuoGJi15zhSFc_811G_qcaxXb6f00e9095648834455883838383838383'
+  'sb_publishable_AtquiuoGJilSzhSFc_8lLg_qcaxX6C7'
 );
 
 const tg = window.Telegram?.WebApp;
